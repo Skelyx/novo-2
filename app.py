@@ -1,34 +1,22 @@
-import os
-from flask import Flask, render_template, request
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# Postavljanje fajla za čuvanje podataka u istom folderu gde je aplikacija
-LOG_FILE = os.path.join(os.getcwd(), "log.txt")
+# Povezivanje sa MySQL bazom
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/flask_app_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-def save_to_file(username, password):
-    with open(LOG_FILE, "a", encoding="utf-8") as file:
-        file.write(f"Username: {username}, Password: {password}\n")
+# Model za korisnike
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), nullable=False)
+    password = db.Column(db.String(150), nullable=False)
 
-# Početna stranica
-@app.route('/')
-def index():
-    return render_template('index.html', error=False)
-
-# Ruta za prijavu
-@app.route('/submit', methods=['POST'])
-def submit():
-    username = request.form.get('username')
-    password = request.form.get('password')
-
-    if username and password:
-        # Čuvanje podataka u fajl
-        save_to_file(username, password)
-        
-        # Prikazivanje lažne greške korisniku
-        return render_template('index.html', error=True, message="Invalid username or password. Please try again.")
-    
-    return render_template('index.html', error=True, message="Please fill in all fields.")
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(host="0.0.0.0", port=10000, debug=True)
