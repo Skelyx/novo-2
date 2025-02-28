@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -16,6 +16,25 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+# Ruta za početnu stranicu
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Ruta za prijavu
+@app.route('/submit', methods=['POST'])
+def submit():
+    username = request.form['username']
+    password = request.form['password']
+
+    # Dodaj korisnika u bazu
+    user = User(username=username, password=password)
+    db.session.add(user)
+    db.session.commit()
+
+    # Prikazivanje poruke
+    return render_template('index.html', message="Uspješno ste se prijavili!")
 
 if __name__ == '__main__':
     db.create_all()
