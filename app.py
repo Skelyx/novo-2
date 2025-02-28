@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 # Povezivanje sa Railway MySQL bazom
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:GvPDvyLfNaSvaXQiEBXiUWroZvvMwJPU@hopper.proxy.rlwy.net:48619/railway')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql://root:YITSMKJBsmZXowpMgMynhHMwJijxIYUD@shinkansen.proxy.rlwy.net:11774/railway')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 
