@@ -5,8 +5,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# Povezivanje sa Railway MySQL bazom
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql://root:YITSMKJBsmZXowpMgMynhHMwJijxIYUD@shinkansen.proxy.rlwy.net:11774/railway')
+# Dobijanje DATABASE_URL iz Railway okruženja ili korišćenje podrazumevanog
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:YITSMKJBsmZXowpMgMynhHMwJijxIYUD@shinkansen.proxy.rlwy.net:11774/railway')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 
@@ -27,18 +29,19 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-# Homepage
+# Početna stranica
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Submit forma
+# Ruta za prijavu
 @app.route('/submit', methods=['POST'])
 def submit():
     username = request.form.get('username')
     password = request.form.get('password')
 
     user = User.query.filter_by(username=username).first()
+    
     if user and user.check_password(password):
         return redirect(url_for('dashboard'))
     else:
@@ -49,11 +52,9 @@ def submit():
 def dashboard():
     return "Welcome to the dashboard!"
 
-# Kreiranje tabela (samo prvi put)
+# Kreiranje tabela u bazi ako ne postoje
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=10000, debug=True)
-
-# Javi ako nešto treba da doradimo! ✌️
