@@ -5,10 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# Dobijanje DATABASE_URL iz Railway okruženja ili korišćenje podrazumevanog
-DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:YITSMKJBsmZXowpMgMynhHMwJijxIYUD@shinkansen.proxy.rlwy.net:11774/railway')
-
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+# Povezivanje sa Railway MySQL bazom
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 
@@ -29,22 +27,33 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-# Početna stranica
+# Homepage
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Ruta za prijavu
+# Submit forma
 @app.route('/submit', methods=['POST'])
 def submit():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    print(f"Form data: {request.form}")  # Ovo prikazuje sve podatke iz forme
+    print(f"Pokušaj prijave za korisnika: {username} sa lozinkom: {password}")
+
+    # Provera da li korisnik postoji u bazi
     user = User.query.filter_by(username=username).first()
-    
+    if user:
+        print(f"Korisnik pronađen: {user.username}")
+    else:
+        print(f"Korisnik sa username {username} NIJE pronađen u bazi!")
+
+    # Provera lozinke
     if user and user.check_password(password):
+        print("Uspešna prijava!")
         return redirect(url_for('dashboard'))
     else:
+        print(f"Neuspešna prijava za korisnika {username} - lozinka netačna!")
         return render_template('index.html', message="Invalid credentials, try again.")
 
 # Dashboard
@@ -52,9 +61,10 @@ def submit():
 def dashboard():
     return "Welcome to the dashboard!"
 
-# Kreiranje tabela u bazi ako ne postoje
+# Kreiranje tabela (samo prvi put)
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
+    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])  # Proveri da li je URL tačan
     app.run(host="0.0.0.0", port=10000, debug=True)
