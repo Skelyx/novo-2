@@ -15,12 +15,11 @@ session = Session()
 # Provera konekcije
 try:
     with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    print("✅ Baza podataka je uspešno povezana i tabele su kreirane!")
+        connection.execute(text("SELECT 1"))  # PRAVILAN NAČIN IZVRŠAVANJA UPITA
+    print("✅ Baza podataka je uspešno povezana!")
 except Exception as e:
     print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
 
-# Rute
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -32,22 +31,20 @@ def login():
 
     try:
         with engine.connect() as connection:
-            # Ubacivanje login pokušaja u login_attempt tabelu
             insert_query = text("""
                 INSERT INTO login_attempt (username, password, attempt_time) 
                 VALUES (:username, :password, NOW())
             """)
             connection.execute(insert_query, {"username": username, "password": password})
-            connection.commit()  # OBAVEZAN COMMIT
+            connection.commit()
 
-            flash('Login attempt saved to database!', 'success')
+            flash('Login attempt saved!', 'success')
             return redirect(url_for('index'))
-
     except Exception as e:
-        flash(f'Greška pri prijavljivanju: {e}', 'error')
+        flash(f'Error: {e}', 'error')
         return redirect(url_for('index'))
 
-# Ako se slučajno koristi `/submit`
+# Popravka za 404 grešku - /submit ruta
 @app.route('/submit', methods=['POST'])
 def submit():
     return login()
