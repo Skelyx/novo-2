@@ -6,10 +6,7 @@ from sqlalchemy import text
 app = Flask(__name__)
 
 # ✅ Povezivanje sa Railway bazom (koristi ENV varijablu ako postoji)
-DATABASE_URL = os.getenv('DATABASE_URL')
-if not DATABASE_URL:
-    raise ValueError("❌ DATABASE_URL nije podešen! Postavite ga kao environment varijablu.")
-
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
@@ -28,6 +25,7 @@ with app.app_context():
         with db.engine.connect() as connection:
             result = connection.execute(text('SELECT 1'))
             print(f"✅ Konekcija sa bazom uspešna: {result.fetchone()}")
+        
         db.create_all()
         print("✅ Tabela je kreirana!")
     except Exception as e:
@@ -38,7 +36,7 @@ with app.app_context():
 def index():
     return render_template('index.html', message=None)
 
-# ✅ Login ruta (bolja sigurnost)
+# ✅ Login ruta
 @app.route('/submit', methods=['POST'])
 def submit():
     username = request.form.get('username')
@@ -61,4 +59,4 @@ def submit():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))  # ✅ Railway PORT
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)

