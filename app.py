@@ -1,21 +1,24 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
+import pymysql
 
+# ✅ Flask aplikacija
 app = Flask(__name__)
 
-# ✅ Railway MySQL konekcija
+# ✅ Povezivanje sa Railway MySQL bazom
 DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 
+# ✅ Inicijalizacija baze
 db = SQLAlchemy(app)
 
-# ✅ Model korisnika (Users)
+# ✅ Model korisnika
 class User(db.Model):
-    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String(150), nullable=False)
@@ -26,39 +29,27 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def __repr__(self):
-        return f'<User {self.username}>'
-
-# ✅ Model za beleženje pokušaja prijave (Login Attempts)
+# ✅ Model za logovanje pokušaja
 class LoginAttempt(db.Model):
-    __tablename__ = 'login_attempts'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False)
-    password = db.Column(db.String(150), nullable=False)  # Čuva plaintext šifru za analizu napada
-    success = db.Column(db.Boolean, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    status = db.Column(db.String(50), nullable=False)  # 'success' ili 'fail'
 
-    def __repr__(self):
-        return f'<LoginAttempt {self.username} - {"Success" if self.success else "Failed"}>'
-
-# ✅ Kreiranje tabela
+# ✅ Kreiranje tabela (ako ne postoje)
 with app.app_context():
     try:
         db.create_all()
         print("✅ Baza podataka je uspešno povezana i tabele su kreirane!")
-        
-        # 🔍 Provera trenutne baze
-        result = db.engine.execute("SELECT DATABASE();").fetchone()
-        print(f"📌 Trenutno koristiš bazu: {result[0]}")
-    
     except Exception as e:
         print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
 
-# ✅ Početna strana
+# ✅ Početna strana (index)
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# ✅ Registracija korisnika
+# ✅ Ruta za registraciju
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -86,33 +77,32 @@ def register():
 
     return render_template('register.html')
 
-# ✅ Login korisnika (čuva pokušaje u `login_attempts`)
+# ✅ Ruta za prijavu (login)
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    print(f"🔍 Pokušaj prijave: {username}")
+    print(f"Pokušaj prijave: {username}")
 
     # Provera korisnika u bazi
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
-        # 🔹 Čuvanje uspešnog pokušaja u `login_attempts`
-        attempt = LoginAttempt(username=username, password=password, success=True)
-        db.session.add(attempt)
+        # ✅ Uspela prijava - čuva se u bazi
+        login_attempt = LoginAttempt(username=username, password=password, status='success')
+        db.session.add(login_attempt)
         db.session.commit()
-
-        flash("✅ Uspešno ste prijavljeni!", "success")
+        
+        flash("Uspešno ste prijavljeni!", "success")
         return redirect(url_for('dashboard'))
-    
     else:
-        # 🔹 Čuvanje neuspešnog pokušaja u `login_attempts`
-        attempt = LoginAttempt(username=username, password=password, success=False)
-        db.session.add(attempt)
+        # ❌ Neuspešna prijava - čuva se u bazi
+        login_attempt = LoginAttempt(username=username, password=password, status='fail')
+        db.session.add(login_attempt)
         db.session.commit()
 
-        flash("❌ Neispravno korisničko ime ili lozinka!", "danger")
+        flash("Neispravno korisničko ime ili lozinka!", "danger")
         return redirect(url_for('index'))
 
 # ✅ Dashboard
