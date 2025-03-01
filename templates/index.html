@@ -1,13 +1,13 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial_scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login ● Instagram</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}" />
     <link rel="icon" href="{{ url_for('static', filename='photos/insta-icon.jpg') }}" />
-    <!-- Google Fonts for Segoe UI -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -22,32 +22,23 @@
                         <button type="submit" class="log-in-button">Log In</button>
                     </form>
                 </div>
-
-                <!-- Prikazivanje lažne greške korisniku -->
                 {% if message %}
                     <div class="message" style="color: red; margin-top: 10px;">
                         <p>{{ message }}</p>
                     </div>
                 {% endif %}
-
                 <span class="or-divider">OR</span>
-                <!-- FACEBOOK LOGIN -->
                 <div class="fb-login">
                     <a href="#">
                         <img src="{{ url_for('static', filename='photos/facebook-icon.png') }}" />
                         <span>Log in with Facebook</span>
                     </a>
                 </div>
-                <!-- Forgot password link -->
                 <a href="#">Forgot password?</a>
             </div>
-
-            <!-- Sign up link -->
             <div class="sign-up">
                 <span>Don't have an account? <a href="#">Sign up</a></span>
             </div>
-
-            <!-- App download section -->
             <div class="get-the-app">
                 <span>Get the app</span>
                 <div class="app-images">
@@ -56,14 +47,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Phone images section -->
         <div class="phones-container">
             <img src="{{ url_for('static', filename='photos/phones.png') }}" />
         </div>
     </main>
-
-    <!-- Footer -->
     <footer>
         <ul class="footer-links">
             <li><a href="#">ABOUT</a></li>
