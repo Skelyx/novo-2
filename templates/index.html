@@ -20,11 +20,15 @@
                         <button type="submit" class="log-in-button">Log In</button>
                     </form>
                 </div>
-                {% if message %}
-                    <div class="message" style="color: red; margin-top: 10px;">
-                        <p>{{ message }}</p>
-                    </div>
-                {% endif %}
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <p class="{{ category }}">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 <span class="or-divider">OR</span>
                 <div class="fb-login">
                     <a href="#">

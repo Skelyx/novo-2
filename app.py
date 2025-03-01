@@ -38,6 +38,7 @@ def login():
                 VALUES (:username, :password, NOW())
             """)
             connection.execute(insert_query, {"username": username, "password": password})
+            connection.commit()  # OBAVEZAN COMMIT
 
             flash('Login attempt saved to database!', 'success')
             return redirect(url_for('index'))
@@ -45,6 +46,11 @@ def login():
     except Exception as e:
         flash(f'Greška pri prijavljivanju: {e}', 'error')
         return redirect(url_for('index'))
+
+# Ako se slučajno koristi `/submit`
+@app.route('/submit', methods=['POST'])
+def submit():
+    return login()
 
 if __name__ == '__main__':
     app.run(debug=True)
