@@ -42,7 +42,7 @@ html {
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif; /* Font from Google Fonts */
+    font-family: 'Segoe UI', sans-serif; /* Font iz Google Fonts */
     background: var(--background-color);
 }
 
@@ -56,114 +56,114 @@ body {
     flex-direction: column;
     align-items: center;
     border: 0.1rem solid rgba(var(--border-color), 0.5);
-    padding: 1.5rem 4rem;
+    padding: 2rem 4rem;
     margin-top: 4rem;
     margin-bottom: 2rem;
+    border-radius: 10px; /* Blago zaobljeni uglovi */
 }
 
-/**logo**/
+/** Logo **/
 .logo {
     width: 19rem;
     margin-bottom: 1rem;
 }
 
-/**log in form**/
+/** Log in forma **/
 .log-in-form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-    .log-in-form input,
-    .log-in-button {
-        padding: 1rem 0 1rem 1rem;
-        border-radius: 0.5rem;
-    }
-
-        /**styles in common for the placeholder and fields**/
-        .log-in-form input,
-        .log-in-form input::placeholder {
-            font-size: 1.1rem;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-    /**form fields**/
-    .log-in-form input {
-        background: var(--background-color);
-        border: 0.1rem solid rgba(var(--border-color), 0.5);
-        outline: none;
-    }
-
-        /**username text**/
-        .log-in-form input[type="text"] {
-            margin-bottom: 0.5rem;
-        }
-
-        /**placeholder for text fields**/
-        .log-in-form input::placeholder {
-            color: var(--placeholder-color);
-        }
-
-        /**styles for text fields when they are focused**/
-        .log-in-form input:focus {
-            border-color: rgba(var(--border-color), 0.8);
-        }
-
-/**log in button**/
-.log-in-button {
-    background: var(--log-in-button);
-    color: var(--white);
-    margin: 2rem 0;
-    font-weight: 700;
-    cursor: pointer;
+/* Input polja */
+.log-in-form input {
+    width: 100%;        /* Polja zauzimaju celu širinu */
+    height: 45px;       /* Veća visina za bolji izgled */
+    padding: 10px;      /* Udoban padding */
+    border: 1px solid rgba(var(--border-color), 0.5);
+    border-radius: 8px; /* Zaobljeni uglovi */
+    font-size: 1.3rem;  /* Veći font za bolju čitljivost */
+    background: var(--background-color);
     outline: none;
-    border: none;
+    transition: 0.3s ease;
+    margin-bottom: 0.8rem;
 }
 
-/**or divider**/
+/* Placeholder stil */
+.log-in-form input::placeholder {
+    color: var(--placeholder-color);
+}
+
+/* Efekat na fokus */
+.log-in-form input:focus {
+    border-color: rgba(var(--border-color), 0.8);
+}
+
+/* Log in dugme */
+.log-in-button {
+    width: 100%;         /* Dugme iste širine kao input polja */
+    height: 45px;        /* Povećana visina */
+    padding: 10px 0;     /* Više prostora unutar dugmeta */
+    font-size: 1.4rem;   /* Veći font */
+    font-weight: bold;
+    border-radius: 8px;  /* Zaobljeni uglovi */
+    background: var(--log-in-button);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+/* Hover efekat na dugme */
+.log-in-button:hover {
+    background: #0077cc; /* Tamnija plava pri hoveru */
+}
+
+/** OR divider **/
 .or-divider {
     color: var(--or-text);
     font-weight: 700;
     position: relative;
     font-size: 1.2rem;
+    margin: 1.5rem 0;
 }
 
-    .or-divider::before,
-    .or-divider::after {
-        content: "";
-        display: block;
-        width: 11rem;
-        height: 0.1rem;
-        position: absolute;
-        background: rgba(var(--border-color), 0.4);
-        top: 50%;
-    }
+.or-divider::before,
+.or-divider::after {
+    content: "";
+    display: block;
+    width: 11rem;
+    height: 0.1rem;
+    position: absolute;
+    background: rgba(var(--border-color), 0.4);
+    top: 50%;
+}
 
-    .or-divider::before {
-        left: 3rem;
-    }
+.or-divider::before {
+    left: 3rem;
+}
 
-    .or-divider::after {
-        right: 3rem;
-    }
+.or-divider::after {
+    right: 3rem;
+}
 
-/**log in with facebook**/
+/** Log in with Facebook **/
 .fb-login {
     margin: 1.5rem 0;
 }
 
-    .fb-login img {
-        width: 1.5rem;
-        margin-right: 0.5rem;
-    }
+.fb-login img {
+    width: 1.5rem;
+    margin-right: 0.5rem;
+}
 
-    .fb-login span {
-        font-size: 1.3rem;
-        color: var(--fb-logo);
-        font-weight: 700;
-    }
+.fb-login span {
+    font-size: 1.3rem;
+    color: var(--fb-logo);
+    font-weight: 700;
+}
 
-/**forgot passwd**/
+/** Forgot password **/
 .forgot-password {
     color: var(--fb-logo);
     font-size: 1.2rem;
@@ -177,18 +177,19 @@ body {
     border: 0.1rem solid rgba(var(--border-color), 0.5);
     padding: 2rem;
     text-align: center;
+    border-radius: 10px;
 }
 
-    .sign-up span {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
+.sign-up span {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
 
-    .sign-up a {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--log-in-button);
-    }
+.sign-up a {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--log-in-button);
+}
 
 /**GET THE APP**/
 .get-the-app {
@@ -200,19 +201,19 @@ body {
     margin-top: 1.5rem;
 }
 
-    .get-the-app span {
-        display: block;
-        margin-bottom: 2rem;
-        font-size: 1.4rem;
-    }
+.get-the-app span {
+    display: block;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
+}
 
 .app-images img {
     width: 13rem;
 }
 
-    .app-images img:nth-child(1) {
-        margin-right: 1rem;
-    }
+.app-images img:nth-child(1) {
+    margin-right: 1rem;
+}
 
 /**PHONES**/
 .phones-container {
@@ -235,17 +236,17 @@ footer {
     margin-bottom: 1rem;
 }
 
-    .footer-links li {
-        flex-basis: 13%;
-        text-align: center;
-    }
+.footer-links li {
+    flex-basis: 13%;
+    text-align: center;
+}
 
-    .footer-links a {
-        color: var(--footer-links);
-        font-weight: 700;
-        display: inline-block;
-        margin-bottom: 1rem;
-    }
+.footer-links a {
+    color: var(--footer-links);
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
 
 .copyright {
     text-align: center;
