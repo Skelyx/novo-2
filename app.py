@@ -9,7 +9,7 @@ app.secret_key = "your_secret_key"
 DATABASE_URL = "mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway"
 
 # ✅ Kreiranje konekcije
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
