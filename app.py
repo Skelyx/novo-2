@@ -48,7 +48,7 @@ def submit():
     except SQLAlchemyError as e:
         db.session.rollback()
         print(f"❌ Greška pri upisu u bazu: {e}")
-        return jsonify({"message": "Greška pri obradi zahteva", "status": "error"})
+        return jsonify({"message": "Sorry, your password was incorrect. Please double-check your password.", "status": "error"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
