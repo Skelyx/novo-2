@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --background-color: #fafafa;
     --white: #ffffff;
     --border-color: 112, 112, 112;
@@ -11,35 +11,46 @@
     --copyright-gray: #bfbfbf;
 }
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--background-color);
+/**OVERWRITE BROWSER DEFAULT **/
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+    box-sizing: border-box;
 }
 
-main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    font-weight: 400;
 }
 
-.log-in-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+a {
+    text-decoration: none;
 }
 
+ul {
+    list-style-type: none;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif; /* Font iz Google Fonts */
+    background: var(--background-color);
+}
+
+/**LOG IN**/
+/**LOG IN CONTAINER**/
 .log-in {
     background: var(--white);
     width: 35rem;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,116 +58,217 @@ main {
     padding: 2rem 4rem;
     margin-top: 4rem;
     margin-bottom: 2rem;
-    border-radius: 10px;
+    border-radius: 10px; /* Blago zaobljeni uglovi */
 }
 
+/** Logo **/
 .logo {
-    width: 200px;
-    margin-bottom: 20px;
+    width: 19rem;
+    margin-bottom: 1rem;
 }
 
+/** Log in forma **/
 .log-in-form {
+    display: flex;
+    flex-direction: column;
     width: 100%;
 }
 
+    /* Input polja */
     .log-in-form input {
-        width: 100%;
-        height: 40px;
-        margin-bottom: 10px;
+        width: 100%; /* Polja zauzimaju celu širinu */
+        height: 45px; /* Veća visina za bolji izgled */
+        padding: 10px; /* Udoban padding */
         border: 1px solid rgba(var(--border-color), 0.5);
-        border-radius: 5px;
-        padding-left: 10px;
-        font-size: 1.2rem;
-        background: #fafafa;
+        border-radius: 8px; /* Zaobljeni uglovi */
+        font-size: 1.3rem; /* Veći font za bolju čitljivost */
+        background: var(--background-color);
+        outline: none;
+        transition: 0.3s ease;
+        margin-bottom: 0.8rem;
     }
 
+        /* Placeholder stil */
+        .log-in-form input::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        /* Efekat na fokus */
+        .log-in-form input:focus {
+            border-color: rgba(var(--border-color), 0.8);
+        }
+
+/* Log in dugme */
 .log-in-button {
-    width: 100%;
-    height: 45px;
-    font-size: 1.4rem;
+    width: 100%; /* Dugme iste širine kao input polja */
+    height: 45px; /* Povećana visina */
+    padding: 10px 0; /* Više prostora unutar dugmeta */
+    font-size: 1.4rem; /* Veći font */
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 8px; /* Zaobljeni uglovi */
     background: var(--log-in-button);
     color: var(--white);
     border: none;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
+    /* Hover efekat na dugme */
     .log-in-button:hover {
-        background: #0077cc;
+        background: #0077cc; /* Tamnija plava pri hoveru */
     }
 
+/** OR divider **/
 .or-divider {
     color: var(--or-text);
-    font-size: 1.3rem;
-    margin: 15px 0;
+    font-weight: 700;
+    position: relative;
+    font-size: 1.2rem;
+    margin: 1.5rem 0;
 }
 
-.fb-login a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--fb-logo);
-    text-decoration: none;
-}
-
-.fb-login img {
-    width: 20px;
-    margin-right: 8px;
-}
-
-.sign-up {
-    background: var(--white);
-    border: 0.1rem solid rgba(var(--border-color), 0.5);
-    padding: 2rem;
-    width: 35rem;
-    text-align: center;
-    font-size: 1.3rem;
-}
-
-    .sign-up a {
-        color: var(--log-in-button);
-        font-weight: bold;
-        text-decoration: none;
+    .or-divider::before,
+    .or-divider::after {
+        content: "";
+        display: block;
+        width: 11rem;
+        height: 0.1rem;
+        position: absolute;
+        background: rgba(var(--border-color), 0.4);
+        top: 50%;
     }
 
-.get-the-app {
-    margin-top: 20px;
+    .or-divider::before {
+        left: 3rem;
+    }
+
+    .or-divider::after {
+        right: 3rem;
+    }
+
+/** Log in with Facebook **/
+.fb-login {
+    margin: 1.5rem 0;
+}
+
+    .fb-login img {
+        width: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .fb-login span {
+        font-size: 1.3rem;
+        color: var(--fb-logo);
+        font-weight: 700;
+    }
+
+/** Forgot password **/
+.forgot-password {
+    color: var(--fb-logo);
+    font-size: 1.2rem;
+}
+
+/**SIGN UP**/
+.sign-up {
+    background: var(--white);
+    width: 35rem;
+    margin: 0 auto;
+    border: 0.1rem solid rgba(var(--border-color), 0.5);
+    padding: 2rem;
     text-align: center;
+    border-radius: 10px;
+}
+
+    .sign-up span {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .sign-up a {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--log-in-button);
+    }
+
+/**GET THE APP**/
+.get-the-app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35rem;
+    margin: 0 auto;
+    margin-top: 1.5rem;
 }
 
     .get-the-app span {
         display: block;
-        font-size: 1.3rem;
-        margin-bottom: 10px;
+        margin-bottom: 2rem;
+        font-size: 1.4rem;
     }
 
 .app-images img {
-    width: 140px;
-    margin: 5px;
+    width: 13rem;
 }
 
+    .app-images img:nth-child(1) {
+        margin-right: 1rem;
+    }
+
+/**PHONES**/
+.phones-container {
+    display: none;
+}
+
+/**FOOTER**/
 footer {
-    text-align: center;
-    font-size: 1.2rem;
-    color: var(--copyright-gray);
-    margin-top: 30px;
+    width: 35rem;
+    display: flex;
+    flex-direction: column;
+    margin: 4rem auto 0 auto;
 }
 
 .footer-links {
-    list-style: none;
-    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
 }
 
     .footer-links li {
-        display: inline;
-        margin: 0 10px;
+        flex-basis: 13%;
+        text-align: center;
     }
 
     .footer-links a {
         color: var(--footer-links);
-        text-decoration: none;
-        font-weight: bold;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 1rem;
     }
+
+.copyright {
+    text-align: center;
+    color: var(--copyright-gray);
+    font-weight: 700;
+    font-size: 1.2rem;
+    .password-container
+
+{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #0095f6;
+}
+
+    .toggle-password:hover {
+        color: #005bb5;
+    }
+}
