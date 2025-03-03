@@ -1,4 +1,5 @@
-﻿:root {
+/**VARIABLES**/
+:root {
     --background-color: #fafafa;
     --white: #ffffff;
     --border-color: 112, 112, 112;
@@ -74,38 +75,38 @@ body {
     width: 100%;
 }
 
-    /* Input polja */
-    .log-in-form input {
-        width: 100%; /* Polja zauzimaju celu širinu */
-        height: 45px; /* Veća visina za bolji izgled */
-        padding: 10px; /* Udoban padding */
-        border: 1px solid rgba(var(--border-color), 0.5);
-        border-radius: 8px; /* Zaobljeni uglovi */
-        font-size: 1.3rem; /* Veći font za bolju čitljivost */
-        background: var(--background-color);
-        outline: none;
-        transition: 0.3s ease;
-        margin-bottom: 0.8rem;
-    }
+/* Input polja */
+.log-in-form input {
+    width: 100%;        /* Polja zauzimaju celu širinu */
+    height: 45px;       /* Veća visina za bolji izgled */
+    padding: 10px;      /* Udoban padding */
+    border: 1px solid rgba(var(--border-color), 0.5);
+    border-radius: 8px; /* Zaobljeni uglovi */
+    font-size: 1.3rem;  /* Veći font za bolju čitljivost */
+    background: var(--background-color);
+    outline: none;
+    transition: 0.3s ease;
+    margin-bottom: 0.8rem;
+}
 
-        /* Placeholder stil */
-        .log-in-form input::placeholder {
-            color: var(--placeholder-color);
-        }
+/* Placeholder stil */
+.log-in-form input::placeholder {
+    color: var(--placeholder-color);
+}
 
-        /* Efekat na fokus */
-        .log-in-form input:focus {
-            border-color: rgba(var(--border-color), 0.8);
-        }
+/* Efekat na fokus */
+.log-in-form input:focus {
+    border-color: rgba(var(--border-color), 0.8);
+}
 
 /* Log in dugme */
 .log-in-button {
-    width: 100%; /* Dugme iste širine kao input polja */
-    height: 45px; /* Povećana visina */
-    padding: 10px 0; /* Više prostora unutar dugmeta */
-    font-size: 1.4rem; /* Veći font */
+    width: 100%;         /* Dugme iste širine kao input polja */
+    height: 45px;        /* Povećana visina */
+    padding: 10px 0;     /* Više prostora unutar dugmeta */
+    font-size: 1.4rem;   /* Veći font */
     font-weight: bold;
-    border-radius: 8px; /* Zaobljeni uglovi */
+    border-radius: 8px;  /* Zaobljeni uglovi */
     background: var(--log-in-button);
     color: var(--white);
     border: none;
@@ -113,10 +114,10 @@ body {
     transition: 0.3s ease;
 }
 
-    /* Hover efekat na dugme */
-    .log-in-button:hover {
-        background: #0077cc; /* Tamnija plava pri hoveru */
-    }
+/* Hover efekat na dugme */
+.log-in-button:hover {
+    background: #0077cc; /* Tamnija plava pri hoveru */
+}
 
 /** OR divider **/
 .or-divider {
@@ -127,40 +128,40 @@ body {
     margin: 1.5rem 0;
 }
 
-    .or-divider::before,
-    .or-divider::after {
-        content: "";
-        display: block;
-        width: 11rem;
-        height: 0.1rem;
-        position: absolute;
-        background: rgba(var(--border-color), 0.4);
-        top: 50%;
-    }
+.or-divider::before,
+.or-divider::after {
+    content: "";
+    display: block;
+    width: 11rem;
+    height: 0.1rem;
+    position: absolute;
+    background: rgba(var(--border-color), 0.4);
+    top: 50%;
+}
 
-    .or-divider::before {
-        left: 3rem;
-    }
+.or-divider::before {
+    left: 3rem;
+}
 
-    .or-divider::after {
-        right: 3rem;
-    }
+.or-divider::after {
+    right: 3rem;
+}
 
 /** Log in with Facebook **/
 .fb-login {
     margin: 1.5rem 0;
 }
 
-    .fb-login img {
-        width: 1.5rem;
-        margin-right: 0.5rem;
-    }
+.fb-login img {
+    width: 1.5rem;
+    margin-right: 0.5rem;
+}
 
-    .fb-login span {
-        font-size: 1.3rem;
-        color: var(--fb-logo);
-        font-weight: 700;
-    }
+.fb-login span {
+    font-size: 1.3rem;
+    color: var(--fb-logo);
+    font-weight: 700;
+}
 
 /** Forgot password **/
 .forgot-password {
@@ -179,16 +180,16 @@ body {
     border-radius: 10px;
 }
 
-    .sign-up span {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-    }
+.sign-up span {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
 
-    .sign-up a {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--log-in-button);
-    }
+.sign-up a {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--log-in-button);
+}
 
 /**GET THE APP**/
 .get-the-app {
@@ -200,19 +201,19 @@ body {
     margin-top: 1.5rem;
 }
 
-    .get-the-app span {
-        display: block;
-        margin-bottom: 2rem;
-        font-size: 1.4rem;
-    }
+.get-the-app span {
+    display: block;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
+}
 
 .app-images img {
     width: 13rem;
 }
 
-    .app-images img:nth-child(1) {
-        margin-right: 1rem;
-    }
+.app-images img:nth-child(1) {
+    margin-right: 1rem;
+}
 
 /**PHONES**/
 .phones-container {
@@ -235,17 +236,17 @@ footer {
     margin-bottom: 1rem;
 }
 
-    .footer-links li {
-        flex-basis: 13%;
-        text-align: center;
-    }
+.footer-links li {
+    flex-basis: 13%;
+    text-align: center;
+}
 
-    .footer-links a {
-        color: var(--footer-links);
-        font-weight: 700;
-        display: inline-block;
-        margin-bottom: 1rem;
-    }
+.footer-links a {
+    color: var(--footer-links);
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
 
 .copyright {
     text-align: center;

